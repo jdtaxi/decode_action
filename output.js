@@ -1,47 +1,72 @@
-//Thu Dec 19 2024 04:37:23 GMT+0000 (Coordinated Universal Time)
+//Thu Dec 19 2024 05:47:30 GMT+0000 (Coordinated Universal Time)
 //Base:https://github.com/echo094/decode-js
 //Modify:https://github.com/smallfawn/decode_action
-const got = require("got");
-let HttpsProxyAgent;
-try {
-  HttpsProxyAgent = require("https-proxy-agent");
-} catch (_0x4867e8) {
-  console.log("\n缺少https-proxy-agent依赖，请运行依赖安装或手动安装!\n");
+const IiiIll = require("got");
+let IIlii = require("https-proxy-agent").HttpsProxyAgent,
+  IlI1il = process.env.RS_PROXY_API || "",
+  IilliI = process.env.RS_PROXY_TIMEOUT || 20000,
+  IlI1ii = 1,
+  lIIiii = "",
+  iI1lli = 0;
+async function ll1iI(IIli1I) {
+  if (!IIli1I) return;
+  const llIliI = await IiiIll.get(IIli1I, {
+    "timeout": {
+      "request": 30000
+    }
+  }).catch(I1i111 => {
+    console.log(I1i111);
+  });
+  lIIiii = llIliI?.["body"] ? llIliI.body.replace("\n", "").replace(/^.*:\/\//, "") : "";
+  while_get_proxy();
 }
-let api = process.env.DY_PROXY;
-let num = 0;
-async function getproxy(_0x433a1d) {
-  const _0x4ab6fe = {
-    timeout: 10000
-  };
-  const _0x2b9007 = await got.get(_0x433a1d, _0x4ab6fe);
-  return _0x2b9007.body.replace("\n", "");
+ll1iI(IlI1il);
+while_get_proxy = async () => {
+  clearTimeout(iI1lli);
+  iI1lli = setTimeout(() => {
+    ll1iI(IlI1il);
+  }, IilliI);
+};
+async function iI1lll(l1lIli) {
+  return new Promise(lIIiiI => {
+    setTimeout(lIIiiI, l1lIli);
+  });
 }
-function intoRequest(_0xe0ccd4, _0x2dfe30 = false) {
-  return ddd = async (_0x25ecc6, _0x24bd4d) => {
-    {
-      api && (num % 50 == 0 || this.failed || _0x2dfe30) && (this.ip = await getproxy(api), this.agent = new HttpsProxyAgent("http://" + this.ip), num = 0);
-      const _0x51735a = {
-        https: this.agent,
-        http: this.agent
+function l1lIll(II1lil, IIli1l, II1lii = false) {
+  this.failnum = 0;
+  return ddd = async (IIll1, ll1il) => {
+    if (IlI1il && (this.failed || II1lii)) {
+      let ll1ll = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/;
+      this.ip = lIIiii;
+      if (ll1ll.test(this.ip) !== false) this.agent = this.ip ? new IIlii("http://" + this.ip) : undefined;
+      this.agent ? console.log("使用代理IP：" + this.ip) : "";
+      IIll1.agent = {
+        "https": this.agent,
+        "http": this.agent
       };
-      _0x25ecc6.agent = _0x51735a;
-      _0x25ecc6.timeout = 10000;
-      _0xe0ccd4(_0x25ecc6, async (_0x3b7d04, _0x466423, _0x54b57b) => {
-        {
-          try {
-            {
-              _0x3b7d04 ? (console.log(JSON.stringify(_0x3b7d04)), this.failed = true, await ddd(_0x25ecc6, _0x24bd4d)) : (num++, api ? console.log("当前使用代理：" + this.ip) : "", this.failed = false, _0x24bd4d(_0x3b7d04, _0x466423, _0x54b57b));
-            }
-          } catch (_0x141043) {
-            console.log(_0x141043);
-          }
+    }
+    IIll1.timeout = {
+      "request": 5000,
+      "response": 5000
+    };
+    try {
+      II1lil[IIli1l](IIll1, async (ii1lI, I1ilIl, I11iII) => {
+        try {
+          ii1lI ? this.failnum < 1 ? (this.failed = true, this.failnum++, await ddd(IIll1, ll1il)) : (this.failed = true, this.failnum = 0, ll1il(ii1lI, I1ilIl, I11iII)) : (IlI1ii++, this.failed = false, this.failnum = 0, ll1il(ii1lI, I1ilIl, I11iII));
+        } catch (l1l11l) {
+          ll1iI(IlI1il);
+          console.log(l1l11l);
+          l1lIll(II1lil, IIli1l, II1lii = false);
         }
       });
+    } catch (l1iIi) {
+      ll1iI(IlI1il);
+      console.log(l1iIi);
+      l1lIll(II1lil, IIli1l, II1lii = false);
     }
   };
 }
-const _0x3d6637 = {
-  intoRequest: intoRequest
+function I1l1II() {}
+module.exports = {
+  "intoRequest": l1lIll
 };
-module.exports = _0x3d6637;
